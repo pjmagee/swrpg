@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "SWGDiscord": {
+      "commandName": "Project",
+        "environmentVariables": {
+            "DOTNET_ENVIRONMENT": "Development",
+            "Token": "OTY3NTYxNzc4ODU2ODg2Mjgy.YmSGIA.kYRQytXnEYJ1jwCr3hRzaeuswr0"
+        },
+      "dotnetRunMessages": true
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
