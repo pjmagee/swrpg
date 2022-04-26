@@ -3,8 +3,7 @@
     "SWGDiscord": {
       "commandName": "Project",
         "environmentVariables": {
-            "DOTNET_ENVIRONMENT": "Development",
-            "Token": "OTY3NTYxNzc4ODU2ODg2Mjgy.YmSGIA.kYRQytXnEYJ1jwCr3hRzaeuswr0"
+            "DOTNET_ENVIRONMENT": "Development"
         },
       "dotnetRunMessages": true
     },

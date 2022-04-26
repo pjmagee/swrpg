@@ -17,7 +17,7 @@ using (IHost host = BuildServiceProvider(args))
     {
         var bot = scope.ServiceProvider.GetRequiredService<DiscordBot>();
 
-        await bot.StartAsync(Environment.GetEnvironmentVariable("Token")!, CancellationToken.None);
+        await bot.StartAsync(CancellationToken.None);
 
         await host.RunAsync();
     }
@@ -28,6 +28,12 @@ public static partial class Program
     private static IHost BuildServiceProvider(string[] args) =>
         Host
             .CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((ctx, builder) =>
+            {
+                builder.AddJsonFile("appsettings.json");
+                builder.AddJsonFile($"appsettings.{ctx.HostingEnvironment.EnvironmentName}.json", optional: true);
+                builder.AddEnvironmentVariables("SWRPG_");
+            })
             .ConfigureLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();

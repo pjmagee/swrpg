@@ -6,25 +6,32 @@ namespace SWRPG.Discord;
 
 public class DiscordBot
 {
-    public const long SWG_RPG_SERVER_ID = 967543198262108331;
-
     private readonly ILogger<DiscordBot> _logger;
+    private readonly IConfiguration _configuration;
     private readonly InteractionHandler _interactionHandler;
     private readonly DiscordSocketClient _client;
     private readonly JsonSerializerOptions _options = new() { WriteIndented = true };
 
-    public DiscordBot(ILogger<DiscordBot> logger, InteractionHandler interactionHandler, DiscordSocketClient client)
+    public DiscordBot(
+        ILogger<DiscordBot> logger,
+        IConfiguration configuration,
+        InteractionHandler interactionHandler,
+        DiscordSocketClient client)
     {
         _logger = logger;
+        _configuration = configuration;
         _interactionHandler = interactionHandler;
         _client = client;
     }
 
-    public async Task StartAsync(string token, CancellationToken cancellationToken = default)
+    public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         _client.Log += ClientOnLog;
 
         await _interactionHandler.InitializeAsync();
+
+        var token = _configuration.GetValue<string>("Settings:Token");
+
         await _client.LoginAsync(TokenType.Bot, token, validateToken: true);
         await _client.StartAsync();
     }

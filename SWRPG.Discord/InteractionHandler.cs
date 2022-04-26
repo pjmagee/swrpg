@@ -10,6 +10,7 @@ namespace SWRPG.Discord;
 
 public class InteractionHandler
 {
+    private readonly IConfiguration _configuration;
     private readonly ILogger<InteractionHandler> _logger;
     private readonly DiscordSocketClient _client;
     private readonly InteractionService _interactions;
@@ -18,11 +19,13 @@ public class InteractionHandler
     private JsonSerializerOptions Options = new() { WriteIndented = true };
 
     public InteractionHandler(
+        IConfiguration configuration,
         ILogger<InteractionHandler> logger,
         DiscordSocketClient client,
         InteractionService interactions,
         IServiceProvider services)
     {
+        _configuration = configuration;
         _logger = logger;
         _client = client;
         _interactions = interactions;
@@ -62,10 +65,7 @@ public class InteractionHandler
         {
             if (Program.IsDebug())
             {
-                foreach (var guild in _client.Guilds)
-                {
-                    await _interactions.RegisterCommandsToGuildAsync(guild.Id);
-                }
+                await _interactions.RegisterCommandsToGuildAsync(_configuration.GetValue<ulong>("Guild"));
             }
             else
             {
