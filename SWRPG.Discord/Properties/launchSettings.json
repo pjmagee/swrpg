@@ -1,14 +1,14 @@
 {
   "profiles": {
-    "SWGDiscord": {
-      "commandName": "Project",
-        "environmentVariables": {
-            "DOTNET_ENVIRONMENT": "Development"
-        },
-      "dotnetRunMessages": true
-    },
     "Docker": {
       "commandName": "Docker"
+    },
+    "SWRPG": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
     }
   }
 }

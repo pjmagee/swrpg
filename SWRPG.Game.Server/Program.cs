@@ -1,10 +1,11 @@
+using System.Text.Json;
+
 using Orleans;
 using Orleans.Hosting;
 
-using SWRPG.Game.Abstractions.Grains;
-using SWRPG.Game.Abstractions.Models;
+using SWRPG.Game.Abstractions;
 using SWRPG.Game.Grains;
-
+using SWRPG.Game.Server;
 using HostBuilderContext = Microsoft.Extensions.Hosting.HostBuilderContext;
 
 var builder = Host
@@ -32,42 +33,26 @@ var builder = Host
         builder
             .ConfigureApplicationParts(parts =>
             {
-                parts.AddApplicationPart(typeof(TenantsGrain).Assembly).WithReferences();
+                parts.AddApplicationPart(typeof(SharedGrain).Assembly).WithReferences();
             });
 
-
-        builder.AddAdoNetGrainStorageAsDefault(options =>
+        _ = ctx.Configuration.GetValue<string>("GrainStorage:Strategy") switch
         {
-            options.Invariant = "Npgsql";
-            options.ConnectionString = ctx.Configuration.GetConnectionString("Default");
-            options.UseJsonFormat = true;
-            options.IndentJson = true;
-        });
+            "InMemory" => builder.AddMemoryGrainStorageAsDefault(),
+            "Database" => builder.AddAdoNetGrainStorageAsDefault(options =>
+            {
+                options.Invariant = "Npgsql";
+                options.ConnectionString = ctx.Configuration.GetConnectionString("Default");
+                options.UseJsonFormat = true;
+                options.IndentJson = true;
+            }),
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         builder.AddSimpleMessageStreamProvider("SMS");
         builder.AddMemoryGrainStorage("PubSubStore");
 
-        builder.AddStartupTask(async (provider, token) =>
-        {
-            var grainFactory = provider.GetRequiredService<IGrainFactory>();
-
-            var speciesGrain = grainFactory.GetGrain<ISpeciesGrain>();
-
-            var species = await speciesGrain.GetSpecies();
-
-            if (species.Count == 0)
-            {
-                await speciesGrain.Add(new Species("Zabrak"));
-                await speciesGrain.Add(new Species("Wookiee"));
-                await speciesGrain.Add(new Species("Human"));
-                await speciesGrain.Add(new Species("Rodian"));
-                await speciesGrain.Add(new Species("Bothan"));
-                await speciesGrain.Add(new Species("Trandoshan"));
-                await speciesGrain.Add(new Species("Mirialans"));
-                await speciesGrain.Add(new Species("Twi'lek"));
-                await speciesGrain.Add(new Species("Chiss"));
-            }
-        });
+        builder.AddStartupTask<StartupTask>();
     });
 
 using var host = builder.Build();

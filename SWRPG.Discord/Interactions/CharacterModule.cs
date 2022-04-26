@@ -27,7 +27,7 @@ public class CharacterModule : OrleansInteractionModuleBase<SocketInteractionCon
         {
             await DeferAsync(true);
 
-            // TODO: Add this profession to the users professions
+            // TODO: AddRace this profession to the users professions
 
             await FollowupAsync("Done.");
         }
@@ -37,7 +37,7 @@ public class CharacterModule : OrleansInteractionModuleBase<SocketInteractionCon
         {
             await DeferAsync(true);
 
-            // TODO: Add this profession to the users professions
+            // TODO: AddRace this profession to the users professions
 
             await FollowupAsync("Done.");
         }
